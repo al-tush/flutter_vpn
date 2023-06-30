@@ -62,7 +62,7 @@ class VpnService {
     // MARK: - Methods
     @available(iOS 9.0, *)
     func connect(
-        result: FlutterResult,
+        result: @escaping FlutterResult,
         type: String,
         server: String,
         username: String,
@@ -75,6 +75,7 @@ class VpnService {
                 let msg = "VPN Preferences error: \(error!.localizedDescription)"
                 debugPrint(msg)
                 VPNStateHandler.updateState(FlutterVpnState.error.rawValue, errorMessage: msg)
+                result(nil)
                 return;
             }
 
@@ -125,6 +126,7 @@ class VpnService {
                     let msg = "VPN Preferences error: \(error!.localizedDescription)"
                     debugPrint(msg)
                     VPNStateHandler.updateState(FlutterVpnState.error.rawValue, errorMessage: msg)
+                    result(nil)
                     return;
                 }
 
@@ -133,20 +135,21 @@ class VpnService {
                         let msg = "VPN Preferences error: \(error!.localizedDescription)"
                         debugPrint(msg)
                         VPNStateHandler.updateState(FlutterVpnState.error.rawValue, errorMessage: msg)
+                        result(nil)
                         return;
-
                     }
 
                     self.configurationSaved = true
                     self.startTunnel()
+                    result(nil)
                 })
             })
         }
-        result(nil)
     }
 
     func startTunnel() {
         do {
+            VPNStateHandler.updateState(FlutterVpnState.connecting.rawValue)
             try self.vpnManager.connection.startVPNTunnel()
         } catch let error as NSError {
             var errorStr = ""
@@ -177,7 +180,6 @@ class VpnService {
             let msg = "Start error: \(errorStr)"
             debugPrint(msg)
             VPNStateHandler.updateState(FlutterVpnState.error.rawValue, errorMessage: msg)
-            return;
         }
     }
 
@@ -193,6 +195,7 @@ class VpnService {
     }
 
     func disconnect(result: FlutterResult) {
+        VPNStateHandler.updateState(FlutterVpnState.disconnecting.rawValue)
         vpnManager.connection.stopVPNTunnel()
         result(nil)
     }

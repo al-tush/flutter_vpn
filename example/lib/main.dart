@@ -79,7 +79,7 @@ class _MyAppState extends State<MyApp> {
             ElevatedButton(
               child: const Text('Update State'),
               onPressed: () async {
-                var newState = await FlutterVpn.currentState;
+                var newState = await FlutterVpn.getCurrentVPNState();
                 setState(() => state = newState);
               },
             ),

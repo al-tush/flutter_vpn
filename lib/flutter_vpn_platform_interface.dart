@@ -41,8 +41,11 @@ abstract class FlutterVpnPlatform extends PlatformInterface {
   /// last subscription can receive events.
   Stream<FlutterVpnState> get onStateChanged => throw UnimplementedError();
 
-  /// Get current state.
-  Future<FlutterVpnState> get currentState async => throw UnimplementedError();
+  /// Current state
+  FlutterVpnState get currentState => throw UnimplementedError();
+
+  /// Get current state (real VPN state, could be different than currentState)
+  Future<FlutterVpnState> getCurrentVPNState() async => throw UnimplementedError();
 
   /// Get current error state from `VpnStateService`. (Android only)
   /// When [FlutterVpnState.error] is received, details of error can be

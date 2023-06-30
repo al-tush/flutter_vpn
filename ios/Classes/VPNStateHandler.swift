@@ -38,6 +38,7 @@ class VPNStateHandler: FlutterStreamHandler {
     }
 
     func onCancel(withArguments _: Any?) -> FlutterError? {
+        print("TEST cancel listen")
         VPNStateHandler._sink = nil
         return nil
     }

@@ -9,6 +9,7 @@
 /// but WITHOUT ANY WARRANTY; without even the implied warranty of
 /// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 /// Lesser General Public License for more details.
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -27,6 +28,16 @@ class MethodChannelFlutterVpn extends FlutterVpnPlatform {
   @visibleForTesting
   final eventChannel = const EventChannel('flutter_vpn_states');
 
+  MethodChannelFlutterVpn() : super() {
+    unawaited(() async {
+      await for (final state in onStateChanged) {
+        _currentState = state;
+      }
+    } ());
+  }
+
+  FlutterVpnState? _currentState;
+
   /// Receive state change from VPN service.
   ///
   /// Can only be listened once. If have more than one subscription, only the
@@ -35,9 +46,13 @@ class MethodChannelFlutterVpn extends FlutterVpnPlatform {
   Stream<FlutterVpnState> get onStateChanged =>
       eventChannel.receiveBroadcastStream().map((e) => FlutterVpnState.values[e]);
 
-  /// Get current state.
+  /// Current state
   @override
-  Future<FlutterVpnState> get currentState async {
+  FlutterVpnState get currentState => _currentState!;
+
+  /// Get current state (real VPN state, could be different than currentState)
+  @override
+  Future<FlutterVpnState> getCurrentVPNState() async {
     final state = await methodChannel.invokeMethod<int>('getCurrentState');
     assert(state != null, 'Received a null state from `getCurrentState` call.');
     return FlutterVpnState.values[state!];

@@ -19,8 +19,10 @@ class FlutterVpn {
   /// last subscription can receive events.
   static Stream<FlutterVpnState> get onStateChanged => FlutterVpnPlatform.instance.onStateChanged;
 
+  static FlutterVpnState get currentState => FlutterVpnPlatform.instance.currentState;
+
   /// Get current state.
-  static Future<FlutterVpnState> get currentState => FlutterVpnPlatform.instance.currentState;
+  static Future<FlutterVpnState> getCurrentVPNState() => FlutterVpnPlatform.instance.getCurrentVPNState();
 
   /// Get current error state from `VpnStateService`. (Android only)
   /// When [FlutterVpnState.error] is received, details of error can be
